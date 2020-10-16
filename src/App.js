@@ -11,7 +11,7 @@ function App() {
     e.preventDefault();
     const game = new Grid(row, col);
     setGame(game);
-    setGrid(game?.current_life());
+    setGrid(game.current_life());
   };
 
   return (
