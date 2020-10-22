@@ -75,6 +75,13 @@ export class Grid {
       );
     }, 0);
   }
+  reset() {
+    for (let row = 0; row < this.rows; row++) {
+      for (let col = 0; col < this.cols; col++) {
+        this.cell(row, col).is_alive = 0;
+      }
+    }
+  }
 
   current_life() {
     return Object.values(this.grid).map((line) =>
