@@ -110,7 +110,7 @@ function App() {
       <span>
         {year} {end}
       </span>
-      {<span>{isStable && "Life is stable."}</span>}
+      {<span>{isStable && "Life is stable"}</span>}
       {game && <GridTable {...{ grid, toggleCellLife, col }} />}
     </>
   );
