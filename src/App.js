@@ -13,14 +13,13 @@ function App() {
   const [ms, setMs] = useState(500);
   const [isStable, setIsStable] = useState(false);
 
-  console.log({ grid });
-
   const handleCreateGrid = (e) => {
     e.preventDefault();
     const game = new Grid(row, col);
     setGame(game);
     setGrid(game.current_life());
   };
+
   const handleReset = () => {
     game.reset();
     let new_grid = game.current_life();
@@ -49,10 +48,17 @@ function App() {
       interval = setInterval(() => {
         let old_grid = game.current_life();
         let new_grid = game.next_life();
+        if (JSON.stringify(old_grid) === JSON.stringify(new_grid)) {
+          setIsStable(true);
+        }
+        if (game.total_cell_count() === 0) {
+          setPlaying(false);
+          setEnd("Life ended");
+        }
         setGrid(new_grid);
         setYear((y) => y + 1);
-      }, 1000);
-      if (game.total_cell_count() === 0) {
+      }, ms);
+      if (game?.total_cell_count() === 0) {
         setPlaying(!playing);
       }
     }
@@ -69,7 +75,7 @@ function App() {
           value={row}
           onChange={(e) => setRow(e.target.value)}
         ></input>
-        Cols:{" "}
+        Columns:{" "}
         <input
           disabled={playing}
           value={col}
@@ -104,7 +110,7 @@ function App() {
       <span>
         {year} {end}
       </span>
-      {<span>{isStable && "Life is stable on the planet now."}</span>}
+      {<span>{isStable && "Life is stable."}</span>}
       {game && <GridTable {...{ grid, toggleCellLife, col }} />}
     </>
   );
