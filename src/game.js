@@ -77,10 +77,19 @@ export class Grid {
   }
   reset() {
     for (let row = 0; row < this.rows; row++) {
-      for (let col = 0; col < this.cols; col++) {
+      for (let col = 0; col < this.columns; col++) {
         this.cell(row, col).is_alive = 0;
       }
     }
+  }
+  random() {
+    let result = Object.values(this.grid).map((rowArray, row) => {
+      return Object.values(rowArray).map((cell, col) => {
+        let life = Math.round(Math.random()) && this.toggle_life(row, col);
+        return life;
+      });
+    });
+    return result;
   }
 
   current_life() {

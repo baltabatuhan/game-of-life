@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Grid } from "./game";
 import GridTable from "./GridTable";
+import GameTutorial from "./GameTutorial";
+
+import { SketchPicker, HuePicker, CompactPicker } from "react-color";
 
 function App() {
   const [game, setGame] = useState({});
@@ -12,6 +15,11 @@ function App() {
   const [end, setEnd] = useState("");
   const [ms, setMs] = useState(500);
   const [isStable, setIsStable] = useState(false);
+  const [bg, setBg] = useState("#000");
+
+  const handleChangeComplete = (color) => {
+    setBg(color.hex);
+  };
 
   const handleCreateGrid = (e) => {
     e.preventDefault();
@@ -36,7 +44,6 @@ function App() {
     }
     if (!playing) {
       setEnd("");
-      setYear(0);
       setIsStable(false);
     }
     setPlaying(!playing);
@@ -67,52 +74,88 @@ function App() {
   }, [playing]);
 
   return (
-    <>
-      <form onSubmit={handleCreateGrid}>
-        Rows:{" "}
-        <input
-          disabled={playing}
-          value={row}
-          onChange={(e) => setRow(e.target.value)}
-        ></input>
-        Columns:{" "}
-        <input
-          disabled={playing}
-          value={col}
-          onChange={(e) => setCol(e.target.value)}
-        ></input>
-        <button
-          disabled={playing}
-          type="submit"
-          onClick={() => console.log("clicked")}
-        >
-          Create Grid
-        </button>
-        <button
-          disabled={!Boolean(game) || playing}
-          type="reset"
-          onClick={handleReset}
-        >
-          Reset
-        </button>
-      </form>
-      <button onClick={toggleStart}>{playing ? "Stop" : "Start"}</button>
-      Set Speed ({ms}ms):
-      <input
-        disabled={playing}
-        value={ms}
-        onChange={(e) => setMs(e.target.value)}
-        type="range"
-        min="100"
-        max="1000"
-      />
-      Life:{" "}
-      <span>
-        {year} {end}
-      </span>
-      {<span>{isStable && "Life is stable"}</span>}
-      {game && <GridTable {...{ grid, toggleCellLife, col }} />}
-    </>
+    <div className="wrapper">
+      <div className="left">
+        <form onSubmit={handleCreateGrid}>
+          <label className="left-row">
+            Rows:
+            <input
+              type="text"
+              disabled={playing}
+              value={row}
+              onChange={(e) => setRow(e.target.value)}
+            ></input>
+          </label>
+          <label className="left-row">
+            Columns:
+            <input
+              type="text"
+              disabled={playing}
+              value={col}
+              onChange={(e) => setCol(e.target.value)}
+            ></input>
+          </label>
+          <label className="left-row">
+            <button
+              disabled={playing}
+              type="submit"
+              onClick={() => console.log("clicked")}
+            >
+              Create Grid
+            </button>
+            <button
+              disabled={!Boolean(game) || playing}
+              type="reset"
+              onClick={handleReset}
+            >
+              Reset Grid
+            </button>
+          </label>
+        </form>
+        <label className="left-row">
+          Set Speed ({ms}ms):
+          <input
+            disabled={!Boolean(game) || playing}
+            value={ms}
+            onChange={(e) => setMs(e.target.value)}
+            type="range"
+            min="50"
+            max="1000"
+          />
+        </label>
+        <label className="left-row">
+          <CompactPicker color={bg} onChangeComplete={handleChangeComplete} />
+        </label>
+        <label className="left-row">
+          <button
+            disabled={!Boolean(game) || playing}
+            onClick={() => {
+              let random = game.random();
+              setGrid(random);
+            }}
+          >
+            Revive Random Cells
+          </button>
+        </label>
+        <label className="left-row">
+          <button
+            disabled={!Boolean(parseInt(row) * parseInt(col)) || !Boolean(game)}
+            onClick={toggleStart}
+          >
+            {playing ? "Stop" : "Start"}
+          </button>
+        </label>
+      </div>
+      <div className="right">
+        <GameTutorial />
+        {game && (
+          <GridTable
+            style={{ transform: "scale(0.5)" }}
+            {...{ grid, toggleCellLife, col, bg, year, end, isStable }}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
